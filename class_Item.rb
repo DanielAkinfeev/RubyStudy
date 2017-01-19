@@ -1,13 +1,48 @@
 class Item
 
-	def initialize(options = {})
-		@price = options [:price]
-		@weight = options [:weight]
+	@@discount = 0.05
+
+	def self.discount
+		if Time.now.month == 1
+			return @@discount + 0.1
+		else
+			return @@discount
+		end
 	end
 
-	#attr_reader :price, :weight
-	#attr_writer :price, :weight
-	attr_accessor :price, :weight
+	def initialize(options = {})
+		@real_price  = options [:price]
+		@name   = options [:name]
+	end
+
+	attr_reader :real_price,:name
+	attr_writer :price
+	#attr_accessor :real_price, :weight
+
+	def info
+		yield(price)
+		yield(name)
+	end
+
+	def price
+		(@real_price - @real_price*self.class.discount) + tax
+	end
+
+	private
+
+		def tax
+			type_tax = if self.class == VirtualItem
+				1
+			else
+				2
+			end
+		    cost_tax = if @real_price > 5
+		    	@real_price*0.2
+		    else
+		    	@real_price*0.1
+		    end
+		    cost_tax + type_tax
+		end
 
 end
 
