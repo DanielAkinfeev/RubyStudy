@@ -1,13 +1,32 @@
 class Item
 
-	def initialize(options = {})
-		@price = options [:price]
-		@weight = options [:weight]
+	@@discount = 0.1
+
+	def self.discount
+		if Time.now.month == 1
+			return @@discount + 0.2
+		else
+			return @@discount
+		end
 	end
 
-	#attr_reader :price, :weight
-	#attr_writer :price, :weight
-	attr_accessor :price, :weight
+	def initialize(options = {})
+		@price  = options [:price]
+		@name   = options [:name]
+	end
+
+	attr_reader :price,:name
+	attr_writer :price
+	#attr_accessor :price, :weight
+
+	def info
+		yield(price)
+		yield(name)
+	end
+
+	def price
+		@price - @price*self.class.discount
+	end
 
 end
 
